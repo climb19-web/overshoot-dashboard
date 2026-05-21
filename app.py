@@ -5,7 +5,7 @@ import plotly.express as px
 import os
 
 # Configura la pagina della Web App
-st.set_page_config(page_title="Overshoot Day App", page_icon="🌍", layout="wide")
+st.set_page_config(page_title="Overshoot Day App", page_icon="🌍", layout="wide", initial_sidebar_state="expanded")
 
 # Creiamo due colonne: la prima prende l'80% dello spazio, la seconda il 20%
 col_testo, col_img = st.columns([4, 1])
@@ -288,9 +288,15 @@ else:
     )
     fig.update_xaxes(rangeslider_visible=True)
 
-    # Renderizza il grafico in modalità statica per migliorare la navigazione su smartphone
-    st.plotly_chart(fig, use_container_width=True, config={'staticPlot': True})
-    st.info("💡 Usa il menu a sinistra per selezionare e confrontare più nazioni contemporaneamente. I grafici sono ottimizzati per la visualizzazione mobile (statici al tocco).")
+    # Configurazione ottimizzata: disabilitiamo solo lo zoom e il drag (che bloccano lo scroll mobile)
+    # ma manteniamo attivi i tooltip e lo slider per la consultazione su PC.
+    fig.update_layout(dragmode=False) # Impedisce al grafico di "catturare" il tocco per spostarsi
+    st.plotly_chart(fig, use_container_width=True, config={
+        'scrollZoom': False, # Niente zoom con rotellina
+        'displayModeBar': False, # Nasconde i bottoni di disturbo sopra il grafico
+        'staticPlot': False # Riattiva l'interattività
+    })
+    st.info("💡 La dashboard è ottimizzata: lo scroll è fluido su mobile, ma i grafici restano interattivi su PC.")
 
     # --- NUOVA SEZIONE: TABELLA DATI ---
     st.markdown("---")
@@ -398,7 +404,8 @@ else:
                           "Impronta Eco Totale (M Gha): %{customdata[2]:.1f}<br>" +
                           "Quante Terre: %{customdata[3]:.2f}<extra></extra>"
         )
-        st.plotly_chart(fig_pie, use_container_width=True, config={'staticPlot': True})
+        fig_pie.update_layout(dragmode=False)
+        st.plotly_chart(fig_pie, use_container_width=True, config={'scrollZoom': False, 'displayModeBar': False})
         st.caption(pie_caption)
         
         if nations_excluded_from_first_pie_chart:
@@ -446,7 +453,8 @@ else:
                           "Biocapacità Totale (M Gha): %{customdata[1]:.1f}<br>" +
                           "Impronta Eco Totale (M Gha): %{customdata[2]:.1f}<extra></extra>"
         )
-        st.plotly_chart(fig_pie_quante_terre, use_container_width=True, config={'staticPlot': True})
+        fig_pie_quante_terre.update_layout(dragmode=False)
+        st.plotly_chart(fig_pie_quante_terre, use_container_width=True, config={'scrollZoom': False, 'displayModeBar': False})
         st.caption(f"Nota: Lo spicchio rappresenta proporzionalmente il numero di 'Terre' necessarie per sostenere il consumo di ciascuna nazione nell'anno {anno_selezionato}.")
         
         if nations_excluded_from_quante_terre_pie_chart:
@@ -540,7 +548,8 @@ else:
                           "%{customdata[2]}<extra></extra>" # customdata[2] è 'Quante Terre Hover'
         )
         fig_bar.update_layout(hovermode="x unified") # Manteniamo hovermode unificato
-        st.plotly_chart(fig_bar, use_container_width=True, config={'staticPlot': True})
+        fig_bar.update_layout(dragmode=False)
+        st.plotly_chart(fig_bar, use_container_width=True, config={'scrollZoom': False, 'displayModeBar': False})
         
         if nations_excluded_from_bar_chart:
             st.warning(f"⚠️ I seguenti paesi selezionati non sono visualizzati nel grafico a barre per l'anno {anno_selezionato} a causa di dati mancanti o non validi ({col_bio_bar} o {col_imp_bar} non positivi): {', '.join(nations_excluded_from_bar_chart)}.")
@@ -666,7 +675,8 @@ if not df_area_all.empty:
     # Rimuoviamo i valori numerici dai punti per migliorare la pulizia visiva e la leggibilità
     fig_area.update_traces(mode="lines+markers")
 
-    st.plotly_chart(fig_area, use_container_width=True, config={'staticPlot': True})
+    fig_area.update_layout(dragmode=False)
+    st.plotly_chart(fig_area, use_container_width=True, config={'scrollZoom': False, 'displayModeBar': False})
     st.caption("Questo grafico mostra il saldo ecologico (Biocapacità - Impronta Ecologica) per le nazioni selezionate. Un valore positivo indica un surplus ecologico (area verde), mentre un valore negativo indica un deficit ecologico (area rossa).")
 
 else:
