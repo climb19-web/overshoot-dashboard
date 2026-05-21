@@ -288,9 +288,9 @@ else:
     )
     fig.update_xaxes(rangeslider_visible=True)
 
-    # Renderizza il grafico interattivo all'interno della Web App
-    st.plotly_chart(fig, use_container_width=True)
-    st.info("💡 Usa il menu a sinistra per selezionare e confrontare più nazioni contemporaneamente. Usa lo slider in fondo al grafico per stringere il range di anni.")
+    # Renderizza il grafico in modalità statica per migliorare la navigazione su smartphone
+    st.plotly_chart(fig, use_container_width=True, config={'staticPlot': True})
+    st.info("💡 Usa il menu a sinistra per selezionare e confrontare più nazioni contemporaneamente. I grafici sono ottimizzati per la visualizzazione mobile (statici al tocco).")
 
     # --- NUOVA SEZIONE: TABELLA DATI ---
     st.markdown("---")
@@ -398,7 +398,7 @@ else:
                           "Impronta Eco Totale (M Gha): %{customdata[2]:.1f}<br>" +
                           "Quante Terre: %{customdata[3]:.2f}<extra></extra>"
         )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, use_container_width=True, config={'staticPlot': True})
         st.caption(pie_caption)
         
         if nations_excluded_from_first_pie_chart:
@@ -446,7 +446,7 @@ else:
                           "Biocapacità Totale (M Gha): %{customdata[1]:.1f}<br>" +
                           "Impronta Eco Totale (M Gha): %{customdata[2]:.1f}<extra></extra>"
         )
-        st.plotly_chart(fig_pie_quante_terre, use_container_width=True)
+        st.plotly_chart(fig_pie_quante_terre, use_container_width=True, config={'staticPlot': True})
         st.caption(f"Nota: Lo spicchio rappresenta proporzionalmente il numero di 'Terre' necessarie per sostenere il consumo di ciascuna nazione nell'anno {anno_selezionato}.")
         
         if nations_excluded_from_quante_terre_pie_chart:
@@ -540,7 +540,7 @@ else:
                           "%{customdata[2]}<extra></extra>" # customdata[2] è 'Quante Terre Hover'
         )
         fig_bar.update_layout(hovermode="x unified") # Manteniamo hovermode unificato
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True, config={'staticPlot': True})
         
         if nations_excluded_from_bar_chart:
             st.warning(f"⚠️ I seguenti paesi selezionati non sono visualizzati nel grafico a barre per l'anno {anno_selezionato} a causa di dati mancanti o non validi ({col_bio_bar} o {col_imp_bar} non positivi): {', '.join(nations_excluded_from_bar_chart)}.")
@@ -666,7 +666,7 @@ if not df_area_all.empty:
     # Rimuoviamo i valori numerici dai punti per migliorare la pulizia visiva e la leggibilità
     fig_area.update_traces(mode="lines+markers")
 
-    st.plotly_chart(fig_area, use_container_width=True)
+    st.plotly_chart(fig_area, use_container_width=True, config={'staticPlot': True})
     st.caption("Questo grafico mostra il saldo ecologico (Biocapacità - Impronta Ecologica) per le nazioni selezionate. Un valore positivo indica un surplus ecologico (area verde), mentre un valore negativo indica un deficit ecologico (area rossa).")
 
 else:
