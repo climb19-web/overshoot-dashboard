@@ -153,6 +153,17 @@ df = load_data()
 
 # Sidebar: Menu laterale per i comandi
 st.sidebar.header("Impostazioni Dashboard")
+
+# Pulsante per scaricare il dataset intero (sempre visibile nella sidebar)
+csv_completo = df.to_csv(index=False).encode('utf-8')
+st.sidebar.download_button(
+    label="📥 Scarica Dataset Completo (CSV)",
+    data=csv_completo,
+    file_name='dataset_overshoot_completo.csv',
+    mime='text/csv',
+)
+st.sidebar.markdown("---")
+
 entita_disponibili = sorted(df["Entità"].unique().tolist())
 selezioni = st.sidebar.multiselect(
     "Scegli le aree geografiche da confrontare:",
@@ -305,17 +316,17 @@ else:
         "Quante Terre"
     ]
 
-    st.dataframe(df_table_data[columns_to_display].sort_values(by=["Entità", "Anno"]), use_container_width=True, hide_index=True)
-    st.caption("Questa tabella mostra i dati grezzi per le nazioni e gli anni selezionati, inclusi i valori di Overshoot Day, Biocapacità, Impronta Ecologica e Quante Terre.")
-    
-    # Pulsante per scaricare i dati mostrati in tabella
+    # Spostiamo il pulsante SOPRA la tabella per renderlo subito visibile
     csv = df_table_data[columns_to_display].to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Scarica dati filtrati (CSV)",
+        label="📥 Scarica questi dati filtrati (CSV)",
         data=csv,
         file_name='dati_overshoot_day.csv',
         mime='text/csv',
     )
+
+    st.dataframe(df_table_data[columns_to_display].sort_values(by=["Entità", "Anno"]), use_container_width=True, hide_index=True)
+    st.caption("Questa tabella mostra i dati grezzi per le nazioni e gli anni selezionati.")
 
 
     # --- NUOVA SEZIONE: GRAFICO A TORTA ---
