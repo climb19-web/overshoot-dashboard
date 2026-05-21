@@ -51,7 +51,11 @@ def load_data():
     file_path = os.path.join(base_path, "datiset_overshoot_fulldata.txt")
     
     # Legge i dati dal file CSV locale
-    df = pd.read_csv(file_path)
+    try:
+        df = pd.read_csv(file_path)
+    except FileNotFoundError:
+        st.error(f"Errore: Il file dati '{file_path}' non è stato trovato nel repository.")
+        return pd.DataFrame()
     
     # Pulisce i nomi delle colonne da eventuali spazi bianchi invisibili
     df.columns = [c.strip() for c in df.columns]
@@ -103,6 +107,9 @@ def load_data():
         "Biocapacità (Gha/persona)",
         "Impronta Eco (Gha/persona)"
     ]
+    
+    if df.empty:
+        return df
     
     for col in numeric_cols_to_clean:
         if col not in df.columns:
@@ -300,6 +307,15 @@ else:
 
     st.dataframe(df_table_data[columns_to_display].sort_values(by=["Entità", "Anno"]), use_container_width=True, hide_index=True)
     st.caption("Questa tabella mostra i dati grezzi per le nazioni e gli anni selezionati, inclusi i valori di Overshoot Day, Biocapacità, Impronta Ecologica e Quante Terre.")
+    
+    # Pulsante per scaricare i dati mostrati in tabella
+    csv = df_table_data[columns_to_display].to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Scarica dati filtrati (CSV)",
+        data=csv,
+        file_name='dati_overshoot_day.csv',
+        mime='text/csv',
+    )
 
 
     # --- NUOVA SEZIONE: GRAFICO A TORTA ---
